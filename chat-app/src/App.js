@@ -4,13 +4,14 @@ import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
+  Redirect,
 } from 'react-router-dom';
 import storageService from './utils/storage';
 
 import { setUser } from './reducers/userReducer';
 import SignUp from './components/SignUp';
 import Login from './components/Login';
+import Chat from './components/Chat';
 
 function App() {
   const dispatch = useDispatch();
@@ -28,8 +29,11 @@ function App() {
           <Route path="/signup">
             <SignUp />
           </Route>
+          <Route path="/chat">
+            <Chat />
+          </Route>
           <Route path="/">
-            <Login />
+            {user ? <Redirect to="/chat" /> : <Login />}
           </Route>
         </Switch>
       </Router>

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 
 function SignUp() {
   const [email, setEmail] = useState('');
@@ -26,9 +27,9 @@ function SignUp() {
           <Form.Label>Password</Form.Label>
           <Form.Control type="password" id="password" placeholder="Password" onChange={({ target }) => setPassword(target.value)} />
         </Form.Group>
-        <Button variant="primary" type="submit">
-          Sign up
-        </Button>
+        <Link to="/">
+          <Button variant="primary" type="submit">Sign up </Button>
+        </Link>
       </Form>
     </div>
   );

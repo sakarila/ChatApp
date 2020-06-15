@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Button, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import storageService from '../utils/storage';
@@ -8,7 +8,6 @@ import { setUser } from '../reducers/userReducer';
 
 function Login() {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -24,8 +23,6 @@ function Login() {
     storageService.saveUser(`${username} + ${password}`);
     dispatch(setUser(`${username} + ${password}`));
   };
-
-  console.log(user);
 
   return (
     <div className="container">
