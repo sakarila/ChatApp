@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
+import authService from '../services/authenticate';
 
 function SignUp() {
+  const history = useHistory();
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(`${username} + ${password} + ${email}`);
+    authService.signup({ username, email, password });
+    history.push('/');
   };
 
   return (
@@ -27,9 +30,7 @@ function SignUp() {
           <Form.Label>Password</Form.Label>
           <Form.Control type="password" id="password" placeholder="Password" onChange={({ target }) => setPassword(target.value)} />
         </Form.Group>
-        <Link to="/">
-          <Button variant="primary" type="submit">Sign up </Button>
-        </Link>
+        <Button variant="primary" type="submit">Sign up </Button>
       </Form>
     </div>
   );

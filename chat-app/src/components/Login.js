@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import storageService from '../utils/storage';
 
 import { setUser } from '../reducers/userReducer';
+import authService from '../services/authenticate';
 
 function Login() {
   const dispatch = useDispatch();
@@ -16,12 +17,12 @@ function Login() {
     dispatch(setUser(savedUser));
   }, [dispatch]);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Here implementation for backend call for user validation
-    storageService.saveUser(`${username} + ${password}`);
-    dispatch(setUser(`${username} + ${password}`));
+    const user = await authService.login({ username, password });
+    storageService.saveUser(user);
+    dispatch(setUser(user));
   };
 
   return (
