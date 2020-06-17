@@ -1,21 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Button, Form } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import storageService from '../utils/storage';
 
 import { setUser } from '../reducers/userReducer';
+import { setChats } from '../reducers/chatReducer';
 import authService from '../services/authenticate';
+import chatService from '../services/chat';
 
 function Login() {
   const dispatch = useDispatch();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-
-  useEffect(() => {
-    const savedUser = storageService.loadUser();
-    dispatch(setUser(savedUser));
-  }, [dispatch]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -23,6 +20,9 @@ function Login() {
     const user = await authService.login({ username, password });
     storageService.saveUser(user);
     dispatch(setUser(user));
+
+    const chats = await chatService.getAllChats();
+    dispatch(setChats(chats));
   };
 
   return (

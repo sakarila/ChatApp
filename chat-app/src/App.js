@@ -11,7 +11,7 @@ import storageService from './utils/storage';
 import { setUser } from './reducers/userReducer';
 import SignUp from './components/SignUp';
 import Login from './components/Login';
-import Chat from './components/Chat';
+import Home from './components/Home';
 
 function App() {
   const dispatch = useDispatch();
@@ -29,11 +29,11 @@ function App() {
           <Route path="/signup">
             <SignUp />
           </Route>
-          <Route path="/chat">
-            <Chat />
+          <Route path="/home">
+            <Home />
           </Route>
           <Route path="/">
-            {user ? <Redirect to="/chat" /> : <Login />}
+            {user ? <Redirect to="/home" /> : <Login />}
           </Route>
         </Switch>
       </Router>

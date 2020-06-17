@@ -12,7 +12,7 @@ function SignUp() {
   const handleSubmit = (event) => {
     event.preventDefault();
     authService.signup({ username, email, password });
-    history.push('/');
+    history.goBack();
   };
 
   return (
@@ -32,6 +32,7 @@ function SignUp() {
         </Form.Group>
         <Button variant="primary" type="submit">Sign up </Button>
       </Form>
+      <Button variant="primary" onClick={() => history.goBack()}>Cancel</Button>
     </div>
   );
 }
