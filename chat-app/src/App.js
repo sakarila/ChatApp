@@ -13,6 +13,8 @@ import SignUp from './components/SignUp';
 import Login from './components/Login';
 import Home from './components/Home';
 
+import './styles/App.css';
+
 function App() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user);
@@ -23,7 +25,7 @@ function App() {
   }, [dispatch]);
 
   return (
-    <div className="container">
+    <div className="page">
       <Router>
         <Switch>
           <Route path="/signup">

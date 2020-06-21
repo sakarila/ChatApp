@@ -1,0 +1,27 @@
+.outerContainer {
+  padding-top: 5%;
+  padding-bottom: 5%;
+  padding-left: 10%;
+  padding-right: 10%;
+  border-radius: 100px;
+  background-color: skyblue;
+}
+
+.header {
+  text-align: center;
+  color: steelblue;
+  font-weight: 700;
+}
+
+.form-label {
+  color: steelblue;
+  font-weight: 700;
+  font-size: large;
+}
+
+.form-btn {
+  padding-left: 5%;
+  padding-right: 5%;
+  margin-right: 2%;
+  background-color: steelblue;
+}

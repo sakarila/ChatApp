@@ -3,6 +3,8 @@ import { Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
+import Chat from './Chat';
+
 import storageService from '../utils/storage';
 import chatService from '../services/chat';
 import { setUser } from '../reducers/userReducer';
@@ -36,9 +38,6 @@ function Home() {
     );
   }
 
-  console.log(chats);
-  console.log(user);
-
   return (
     <div className="container">
       <h1>
@@ -49,7 +48,7 @@ function Home() {
           {chat.title}
         </p>
       ))}
-      <p>Kirjautuneena pitäisi päätyä tänne</p>
+      <Chat />
       <Button onClick={logOut}>Log out</Button>
     </div>
   );
