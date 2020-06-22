@@ -1,0 +1,39 @@
+.chatsContainer {
+  display: flex;
+  margin: 5%;
+  margin-left: 15%;
+  margin-right: 15%;
+  padding: 3%;
+  border-radius: 100px;
+  background-color: skyblue;
+  height: 700px;
+}
+
+.chatList {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.currentChat {
+  flex: 2;
+}
+
+.logOut-button {
+  align-self: flex-end;
+}
+
+.chat-btn {
+  padding: 5%;
+  margin: 2%;
+  background-color: steelblue;
+}
+
+.create-chat-btn {
+  margin: 2%;
+  background-color: steelblue;
+}
+
+.chatbox {
+  flex: 1
+}

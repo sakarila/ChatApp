@@ -12,4 +12,14 @@ const getAllChats = async () => {
   return response.data;
 };
 
-export default { getAllChats };
+const createChat = async (title) => {
+  const response = await axios.post(`${baseUrl}/chat`, { title }, getConfig());
+  return response.data;
+};
+
+const getCurrentChat = async (chatID) => {
+  const response = await axios.get(`${baseUrl}/chat/${chatID}`, getConfig());
+  return response.data;
+};
+
+export default { getAllChats, createChat, getCurrentChat };

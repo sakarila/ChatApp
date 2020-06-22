@@ -16,7 +16,7 @@ function SignUp() {
   };
 
   return (
-    <div className="outerContainer">
+    <div className="formContainer">
       <h1 className="header">Register for a new account!</h1>
       <Form onSubmit={handleSubmit}>
         <Form.Group>
@@ -32,7 +32,7 @@ function SignUp() {
           <Form.Control type="password" id="password" onChange={({ target }) => setPassword(target.value)} />
         </Form.Group>
         <Button variant="primary" className="form-btn" type="submit">
-          Sign up
+          Sign up!
         </Button>
         <Button variant="primary" className="form-btn" onClick={() => history.goBack()}>
           Cancel

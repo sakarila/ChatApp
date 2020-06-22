@@ -29,7 +29,7 @@ function Login() {
   };
 
   return (
-    <div className="outerContainer">
+    <div className="formContainer">
       <div>
         <h1 className="header">Welcome to ChatApp!</h1>
         <Form onSubmit={handleSubmit}>

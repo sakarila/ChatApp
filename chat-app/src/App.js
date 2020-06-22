@@ -25,7 +25,7 @@ function App() {
   }, [dispatch]);
 
   return (
-    <div className="page">
+    <div>
       <Router>
         <Switch>
           <Route path="/signup">
