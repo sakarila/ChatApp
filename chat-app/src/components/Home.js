@@ -19,9 +19,6 @@ function Home() {
 
   const user = useSelector((state) => state.user);
   const chats = useSelector((state) => state.chats.chats);
-  const messages = useSelector((state) => state.messages);
-
-  console.log(messages);
 
   const getChats = async () => {
     const userChats = await chatService.getAllChats();

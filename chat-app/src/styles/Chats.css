@@ -37,3 +37,11 @@
 .chatbox {
   flex: 1
 }
+
+.right-msg {
+  float: right;
+}
+
+.left-msg {
+  float: left;
+}

@@ -22,4 +22,11 @@ const getCurrentChat = async (chatID) => {
   return response.data;
 };
 
-export default { getAllChats, createChat, getCurrentChat };
+const postNewMessage = async (chatID, message) => {
+  const response = await axios.post(`${baseUrl}/chat/${chatID}`, { message }, getConfig());
+  return response.data;
+};
+
+export default {
+  getAllChats, createChat, getCurrentChat, postNewMessage,
+};

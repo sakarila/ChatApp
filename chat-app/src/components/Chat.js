@@ -1,17 +1,23 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Button, Form } from 'react-bootstrap';
 
+import chatService from '../services/chat';
+import { addMessage } from '../reducers/chatReducer';
+
 function Chat() {
+  const dispatch = useDispatch();
+
   const [message, setMessage] = useState('');
 
   const chat = useSelector((state) => state.chats.currentChat);
+  const user = useSelector((state) => state.user);
 
   const createMessage = async (event) => {
     event.preventDefault();
 
-    // Tässä luotais keskusteluun uus viesti
-    console.log(message);
+    const newMessage = await chatService.postNewMessage(chat.id, message);
+    dispatch(addMessage(newMessage));
     setMessage('');
   };
 
@@ -27,11 +33,10 @@ function Chat() {
     <div className="chatbox">
       <h1>{chat.title}</h1>
       {chat.messages.map((msg) => (
-        <p key={msg.id}>
-          {msg.message}
+        <div key={msg.id} className={msg.user.username === user.username ? 'right-msg' : 'left-msg'}>
           {msg.user.username}
-          {msg.time}
-        </p>
+          {msg.message}
+        </div>
       ))}
       <Form onSubmit={createMessage}>
         <Form.Group>
