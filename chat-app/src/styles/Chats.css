@@ -1,47 +1,89 @@
 .chatsContainer {
-  display: flex;
-  margin: 5%;
-  margin-left: 15%;
-  margin-right: 15%;
-  padding: 3%;
+  margin: 100px 200px 50px 200px;
+  height: 750px;
+  padding: 40px 60px;
   border-radius: 100px;
   background-color: skyblue;
-  height: 700px;
 }
 
-.chatList {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+.chat-header {
+  color: steelblue;
+  text-align: center;
+  font-weight: 700;
 }
 
-.currentChat {
-  flex: 2;
+.chat-list {
+  float: left;
+  width: 40%;
+  overflow-y: auto;
+  border: none;
+  height: 85%;
 }
 
-.logOut-button {
-  align-self: flex-end;
-}
-
-.chat-btn {
-  padding: 5%;
-  margin: 2%;
-  background-color: steelblue;
-}
-
-.create-chat-btn {
-  margin: 2%;
-  background-color: steelblue;
+.current-chat {
+  float: right;
+  width: 60%;
+  padding: 0px 20px;
+  height: 85%;
 }
 
 .chatbox {
-  flex: 1
+  height: 100%;
+}
+
+.current-chat-messages {
+  background-color: white;
+  border-radius: 20px;
+  height: 70%;
+  overflow-y: auto;
+}
+
+.chat-btn {
+  background-color: steelblue;
+  border: none;
+  cursor: pointer;
+  padding:20px 10px;
+  margin: 10px 0px;
+  width:90%;
+  border-radius: 100px;
+}
+
+.chat-list-header {
+  color: steelblue;
+  font-weight: 700;
+  margin: 0px 150px 20px 150px;
+}
+
+.current-chat-header {
+  color: steelblue;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.input-group {
+  margin: 10px 0px;
+}
+
+.input-btn {
+  margin-left: 10px;
+  background-color: steelblue;
+  color: white;
+  border: none;
+  border-radius: 10px;
 }
 
 .right-msg {
-  float: right;
+  padding: 0px 10px 0px 10px;
+  margin: 5px 10px;
+  background-color: skyblue;
+  border-radius: 10px;
+  text-align: right;
 }
 
 .left-msg {
-  float: left;
+  padding: 0px 10px 0px 10px;
+  margin: 5px 10px;
+  background-color: steelblue;
+  border-radius: 10px;
 }

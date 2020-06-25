@@ -1,7 +1,14 @@
-const userReducer = (state = null, action) => {
+const initialState = {
+  users: [],
+  currentUser: null,
+};
+
+const userReducer = (state = initialState, action) => {
   switch (action.type) {
     case 'SET_USER':
-      return action.payload;
+      return { ...state, currentUser: action.payload };
+    case 'SET_ALL_USERS':
+      return { ...state, users: action.payload };
     default: return state;
   }
 };
@@ -9,6 +16,11 @@ const userReducer = (state = null, action) => {
 export const setUser = (user) => ({
   type: 'SET_USER',
   payload: user,
+});
+
+export const setAllUsers = (users) => ({
+  type: 'SET_ALL_USERS',
+  payload: users,
 });
 
 export default userReducer;

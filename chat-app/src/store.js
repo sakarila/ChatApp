@@ -3,7 +3,7 @@ import userReducer from './reducers/userReducer';
 import chatReducer from './reducers/chatReducer';
 
 const reducer = combineReducers({
-  user: userReducer,
+  users: userReducer,
   chats: chatReducer,
 });
 

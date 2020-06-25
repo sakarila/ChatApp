@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import authService from '../services/authenticate';
+import userService from '../services/user';
 
 function SignUp() {
   const history = useHistory();
@@ -11,7 +11,7 @@ function SignUp() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    authService.signup({ username, email, password });
+    userService.signup({ username, email, password });
     history.goBack();
   };
 

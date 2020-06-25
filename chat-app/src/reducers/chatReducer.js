@@ -17,6 +17,12 @@ const chatReducer = (state = initialState, action) => {
         currentChat:
         { ...state.currentChat, messages: state.currentChat.messages.concat(action.payload) },
       };
+    case 'ADD_USER':
+      return {
+        ...state,
+        currentChat:
+        { ...state.currentChat, users: state.currentChat.users.concat(action.payload) },
+      };
     default: return state;
   }
 };
@@ -39,6 +45,11 @@ export const setCurrentChat = (chat) => ({
 export const addMessage = (message) => ({
   type: 'ADD_MESSAGE',
   payload: message,
+});
+
+export const addUser = (user) => ({
+  type: 'ADD_USER',
+  payload: user,
 });
 
 export default chatReducer;

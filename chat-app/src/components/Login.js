@@ -5,9 +5,7 @@ import { useHistory } from 'react-router-dom';
 import storageService from '../utils/storage';
 
 import { setUser } from '../reducers/userReducer';
-import { setChats } from '../reducers/chatReducer';
-import authService from '../services/authenticate';
-import chatService from '../services/chat';
+import userService from '../services/user';
 
 import '../styles/Auth.css';
 
@@ -20,12 +18,9 @@ function Login() {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
-    const user = await authService.login({ username, password });
+    const user = await userService.login({ username, password });
     storageService.saveUser(user);
     dispatch(setUser(user));
-
-    const chats = await chatService.getAllChats();
-    dispatch(setChats(chats));
   };
 
   return (

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
+import {
+  Button, FormControl, Image, InputGroup,
+} from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 
@@ -7,7 +9,8 @@ import Chat from './Chat';
 
 import storageService from '../utils/storage';
 import chatService from '../services/chat';
-import { setUser } from '../reducers/userReducer';
+import userService from '../services/user';
+import { setUser, setAllUsers } from '../reducers/userReducer';
 import { setChats, addChat, setCurrentChat } from '../reducers/chatReducer';
 
 import '../styles/Chats.css';
@@ -17,7 +20,7 @@ function Home() {
 
   const [chatTitle, setChatTitle] = useState('');
 
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state) => state.users.currentUser);
   const chats = useSelector((state) => state.chats.chats);
 
   const getChats = async () => {
@@ -25,10 +28,16 @@ function Home() {
     dispatch(setChats(userChats));
   };
 
+  const getUsers = async () => {
+    const users = await userService.getAllUsers();
+    dispatch(setAllUsers(users));
+  };
+
   useEffect(() => {
     const savedUser = storageService.loadUser();
     dispatch(setUser(savedUser));
     getChats();
+    getUsers();
   }, []);
 
   const logOut = () => {
@@ -39,7 +48,6 @@ function Home() {
 
   const createChat = async (event) => {
     event.preventDefault();
-
     const newChat = await chatService.createChat(chatTitle);
     dispatch(addChat(newChat));
     setChatTitle('');
@@ -50,6 +58,10 @@ function Home() {
     dispatch(setCurrentChat(currentChat));
   };
 
+  const handleChange = (event) => {
+    setChatTitle(event.target.value);
+  };
+
   if (!user) {
     return (
       <Redirect to="/" />
@@ -58,26 +70,23 @@ function Home() {
 
   return (
     <div className="chatsContainer">
-      <div className="chatList">
+      <Image src="" roundedCircle />
+      <Button className="input-btn" onClick={logOut}>Log out</Button>
+      <InputGroup onChange={handleChange}>
+        <FormControl maxLength={60} placeholder="Type a name for the chat" />
+        <Button className="input-btn" onClick={createChat}>Create</Button>
+      </InputGroup>
+      <div className="chat-list">
+        <h1 className="chat-list-header">Your chats</h1>
         {chats.map((chat) => (
           <Button className="chat-btn" key={chat.id} variant="primary" onClick={() => selectChat(chat.id)}>
             {chat.title}
           </Button>
         ))}
       </div>
-      <div className="currentChat">
-        <Form onSubmit={createChat}>
-          <Form.Group>
-            <Form.Label>Create a new conversation!</Form.Label>
-            <Form.Control type="text" value={chatTitle} placeholder="Type a name for the chat" onChange={({ target }) => setChatTitle(target.value)} />
-          </Form.Group>
-          <Button className="create-chat-btn" variant="primary" type="submit">
-            Create
-          </Button>
-        </Form>
+      <div className="current-chat">
         <Chat />
       </div>
-      <Button className="logOut-button" onClick={logOut}>Log out</Button>
     </div>
   );
 }

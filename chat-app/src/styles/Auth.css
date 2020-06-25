@@ -1,9 +1,6 @@
 .formContainer {
-  margin: 10%;
-  padding-top: 5%;
-  padding-bottom: 5%;
-  padding-left: 10%;
-  padding-right: 10%;
+  margin: 200px;
+  padding: 80px 100px;
   border-radius: 100px;
   background-color: skyblue;
 }
@@ -21,8 +18,7 @@
 }
 
 .form-btn {
-  padding-left: 5%;
-  padding-right: 5%;
-  margin-right: 2%;
+  padding: 5px 60px;
+  margin-right: 20px;
   background-color: steelblue;
 }
