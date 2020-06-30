@@ -12,6 +12,7 @@ import chatService from '../services/chat';
 import userService from '../services/user';
 import { setUser, setAllUsers } from '../reducers/userReducer';
 import { setChats, addChat, setCurrentChat } from '../reducers/chatReducer';
+import socketService from '../services/socket';
 
 import '../styles/Chats.css';
 
@@ -25,6 +26,9 @@ function Home() {
 
   const getChats = async () => {
     const userChats = await chatService.getAllChats();
+    const chatIDs = userChats.map((chat) => chat.id);
+
+    socketService.subscribeChats(chatIDs);
     dispatch(setChats(userChats));
   };
 
@@ -67,6 +71,8 @@ function Home() {
       <Redirect to="/" />
     );
   }
+
+  console.log(chats);
 
   return (
     <div className="chatsContainer">

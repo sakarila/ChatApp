@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Button, Form } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
-import storageService from '../utils/storage';
 
+import storageService from '../utils/storage';
 import { setUser } from '../reducers/userReducer';
 import userService from '../services/user';
 

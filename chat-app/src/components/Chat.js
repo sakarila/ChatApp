@@ -6,6 +6,7 @@ import {
 } from 'react-bootstrap';
 
 import chatService from '../services/chat';
+import socketService from '../services/socket';
 import { addMessage, addUser } from '../reducers/chatReducer';
 
 function Chat() {
@@ -22,6 +23,7 @@ function Chat() {
     event.preventDefault();
 
     const newMessage = await chatService.postNewMessage(chat.id, message);
+    socketService.sendMessage(newMessage.id, chat.id);
     dispatch(addMessage(newMessage));
     setMessage('');
   };
@@ -53,8 +55,6 @@ function Chat() {
     dispatch(addUser(addedUser));
     setNewUser('');
   };
-
-  console.log(newUser);
 
   return (
     <div className="chatbox">
