@@ -1,11 +1,15 @@
 import axios from 'axios';
-import storageService from '../utils/storage';
+import store from '../store';
 
 const baseUrl = 'http://localhost:3001/api/chat';
 
-const getConfig = () => ({
-  headers: { Authorization: `bearer ${storageService.loadUser().token}` },
-});
+const getConfig = () => {
+  const state = store.getState();
+  if (state.users.currentUser) {
+    return { headers: { Authorization: `bearer ${state.users.currentUser.token}` } };
+  }
+  return null;
+};
 
 const getAllChats = async () => {
   const response = await axios.get(`${baseUrl}`, getConfig());

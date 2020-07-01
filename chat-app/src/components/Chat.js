@@ -62,8 +62,8 @@ function Chat() {
       <div className="current-chat-messages">
         {chat.messages.map((msg) => (
           <div key={msg.id} className={msg.user.username === user.username ? 'right-msg' : 'left-msg'}>
-            {msg.user.username}
-            {msg.message}
+            <p>{msg.message}</p>
+            <div>{`${msg.user.username} ${msg.time}`}</div>
           </div>
         ))}
       </div>

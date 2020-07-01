@@ -12,6 +12,7 @@ socket.on('new-message', (({ message, chatID }) => {
     console.log('Oikee chatti');
   } else {
     console.log('Eri chatti');
+    // Tähän toteutus jossa luodaan notifikaatti chat-listaan uusista viesteistä
   }
 }));
 

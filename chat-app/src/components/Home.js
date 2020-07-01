@@ -42,12 +42,17 @@ function Home() {
     dispatch(setUser(savedUser));
     getChats();
     getUsers();
+
+    return () => {
+      userService.updateLastLogin();
+    };
   }, []);
 
   const logOut = () => {
+    userService.updateLastLogin();
     storageService.logoutUser();
-    dispatch(setUser(null));
     dispatch(setChats([]));
+    dispatch(setUser(null));
   };
 
   const createChat = async (event) => {
