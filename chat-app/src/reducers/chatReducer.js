@@ -4,6 +4,11 @@ const initialState = {
 };
 
 const chatReducer = (state = initialState, action) => {
+  const updateMessageNotification = (notification) => state.chats.map((chat) => ({
+    ...chat,
+    messageNotification: chat.id === action.payload ? notification : chat.messageNotification,
+  }));
+
   switch (action.type) {
     case 'SET_CHATS':
       return { ...state, chats: action.payload };
@@ -22,6 +27,16 @@ const chatReducer = (state = initialState, action) => {
         ...state,
         currentChat:
         { ...state.currentChat, users: state.currentChat.users.concat(action.payload) },
+      };
+    case 'ADD_MESSAGE_NOTIFICATION':
+      return {
+        ...state,
+        chats: updateMessageNotification('New messages!'),
+      };
+    case 'REMOVE_MESSAGE_NOTIFICATION':
+      return {
+        ...state,
+        chats: updateMessageNotification(''),
       };
     default: return state;
   }
@@ -50,6 +65,16 @@ export const addMessage = (message) => ({
 export const addUser = (user) => ({
   type: 'ADD_USER',
   payload: user,
+});
+
+export const addMessageNotification = (chatID) => ({
+  type: 'ADD_MESSAGE_NOTIFICATION',
+  payload: chatID,
+});
+
+export const removeMessageNotification = (chatID) => ({
+  type: 'REMOVE_MESSAGE_NOTIFICATION',
+  payload: chatID,
 });
 
 export default chatReducer;

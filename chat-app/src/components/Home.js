@@ -8,10 +8,14 @@ import { Redirect } from 'react-router-dom';
 import Chat from './Chat';
 
 import storageService from '../utils/storage';
+import helperService from '../utils/helpers';
+
 import chatService from '../services/chat';
 import userService from '../services/user';
 import { setUser, setAllUsers } from '../reducers/userReducer';
-import { setChats, addChat, setCurrentChat } from '../reducers/chatReducer';
+import {
+  setChats, addChat, setCurrentChat, removeMessageNotification,
+} from '../reducers/chatReducer';
 import socketService from '../services/socket';
 
 import '../styles/Chats.css';
@@ -24,12 +28,13 @@ function Home() {
   const user = useSelector((state) => state.users.currentUser);
   const chats = useSelector((state) => state.chats.chats);
 
-  const getChats = async () => {
+  const getChats = async (savedUser) => {
     const userChats = await chatService.getAllChats();
+    const chatsWithTime = helperService.initMessageNotifications(savedUser, userChats);
     const chatIDs = userChats.map((chat) => chat.id);
 
     socketService.subscribeChats(chatIDs);
-    dispatch(setChats(userChats));
+    dispatch(setChats(chatsWithTime));
   };
 
   const getUsers = async () => {
@@ -39,18 +44,21 @@ function Home() {
 
   useEffect(() => {
     const savedUser = storageService.loadUser();
+
     dispatch(setUser(savedUser));
-    getChats();
+    getChats(savedUser);
     getUsers();
 
-    return () => {
-      userService.updateLastLogin();
+    return async () => {
+      const updatedUser = await userService.updateLastLogin();
+      storageService.saveUser(updatedUser);
     };
   }, []);
 
   const logOut = () => {
     userService.updateLastLogin();
     storageService.logoutUser();
+    dispatch(setCurrentChat(null));
     dispatch(setChats([]));
     dispatch(setUser(null));
   };
@@ -64,6 +72,7 @@ function Home() {
 
   const selectChat = async (chatID) => {
     const currentChat = await chatService.getCurrentChat(chatID);
+    dispatch(removeMessageNotification(chatID));
     dispatch(setCurrentChat(currentChat));
   };
 
@@ -76,8 +85,6 @@ function Home() {
       <Redirect to="/" />
     );
   }
-
-  console.log(chats);
 
   return (
     <div className="chatsContainer">
@@ -92,6 +99,7 @@ function Home() {
         {chats.map((chat) => (
           <Button className="chat-btn" key={chat.id} variant="primary" onClick={() => selectChat(chat.id)}>
             {chat.title}
+            {chat.messageNotification}
           </Button>
         ))}
       </div>
