@@ -16,8 +16,8 @@ const getAllChats = async () => {
   return response.data;
 };
 
-const createChat = async (title) => {
-  const response = await axios.post(`${baseUrl}`, { title }, getConfig());
+const createChat = async (title, users) => {
+  const response = await axios.post(`${baseUrl}`, { title, users }, getConfig());
   return response.data;
 };
 
