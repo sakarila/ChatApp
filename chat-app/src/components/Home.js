@@ -70,6 +70,15 @@ function Home() {
 
   const createChat = async (event) => {
     event.preventDefault();
+    if (!chatTitle) {
+      console.log('Huono input otsikolle');
+      return;
+    }
+    if (!chatUsers.length >= 1) {
+      console.log('Huono input käyttäjille');
+      return;
+    }
+
     const newChat = await chatService.createChat(chatTitle, chatUsers);
     dispatch(addChat(newChat));
     setChatTitle('');
@@ -93,8 +102,8 @@ function Home() {
     <div className="chatsContainer">
       <div className="chatContainerHeader">
         <Image src="" roundedCircle />
-        <Button className="input-btn" onClick={logOut}>Log out</Button>
-        <Button className="input-btn" onClick={() => setShowModal(!showModal)}>Create chat</Button>
+        <Button className="input-btn" id="logOut-btn" onClick={logOut}>Log out</Button>
+        <Button className="input-btn" id="createChat-btn" onClick={() => setShowModal(!showModal)}>Create chat</Button>
 
         <Modal
           size="lg"
@@ -134,18 +143,21 @@ function Home() {
           </Modal.Body>
         </Modal>
       </div>
-
-      <div className="chat-list">
-        <h1 className="chat-list-header">Your chats</h1>
-        {chats.map((chat) => (
-          <Button className="chat-btn" key={chat.id} variant="primary" onClick={() => selectChat(chat.id)}>
-            {chat.title}
-            {chat.messageNotification}
-          </Button>
-        ))}
-      </div>
-      <div className="current-chat">
-        <Chat />
+      <div className="chatContainerBody">
+        <div className="chat-list">
+          <h1 className="chat-list-header">Chats</h1>
+          <div className="chat-list-body">
+            {chats.map((chat) => (
+              <Button className="chat-btn" key={chat.id} variant="primary" onClick={() => selectChat(chat.id)}>
+                {chat.title}
+                <p className="chat-message-notification">{chat.messageNotification}</p>
+              </Button>
+            ))}
+          </div>
+        </div>
+        <div className="current-chat">
+          <Chat />
+        </div>
       </div>
     </div>
   );

@@ -11,6 +11,19 @@ function SignUp() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (!email) {
+      console.log('Tyhjä input sähköpostille');
+      return;
+    }
+    if (!username) {
+      console.log('Tyhjä input käyttäjänimelle');
+      return;
+    }
+    if (!password) {
+      console.log('Tyhjä input salasanalle');
+      return;
+    }
+
     userService.signup({ username, email, password });
     history.goBack();
   };

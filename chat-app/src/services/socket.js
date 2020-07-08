@@ -1,4 +1,5 @@
 import io from 'socket.io-client';
+import moment from 'moment';
 
 import store from '../store';
 import { addMessage, addMessageNotification } from '../reducers/chatReducer';
@@ -8,7 +9,8 @@ const socket = io('http://localhost:3001');
 socket.on('new-message', (({ message, chatID }) => {
   const state = store.getState();
   if (state.chats.currentChat && state.chats.currentChat.id === chatID) {
-    store.dispatch(addMessage(message));
+    const dateFormattedMessage = { ...message, time: moment(message.time).format('DD.MM.YYYY HH:mm:ss') };
+    store.dispatch(addMessage(dateFormattedMessage));
   } else {
     store.dispatch(addMessageNotification(chatID));
   }

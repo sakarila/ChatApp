@@ -17,6 +17,14 @@ function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    if (!username) {
+      console.log('Username-kenttä on tyhjillään');
+      return;
+    }
+    if (!password) {
+      console.log('Password-kenttä on tyhjillään');
+      return;
+    }
 
     const user = await userService.login({ username, password });
     storageService.saveUser(user);
