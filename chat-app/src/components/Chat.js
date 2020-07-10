@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import {
-  Button, Form, Modal, InputGroup,
+  Button, Form, Modal, InputGroup, OverlayTrigger, Tooltip,
 } from 'react-bootstrap';
 import { animateScroll } from 'react-scroll';
 
@@ -20,6 +20,9 @@ function Chat() {
   const chat = useSelector((state) => state.chats.currentChat);
   const user = useSelector((state) => state.users.currentUser);
   const users = useSelector((state) => state.users.users);
+  const loggedUsers = useSelector((state) => state.users.loggedUsers);
+
+  console.log(chat);
 
   const scrollToBottom = () => {
     animateScroll.scrollToBottom({
@@ -65,8 +68,13 @@ function Chat() {
     }
 
     const addedUser = await chatService.addUserToChat(newUser, chat.id);
-    console.log(addedUser);
     dispatch(addUser(addedUser));
+
+    const newUserLogged = loggedUsers.find((loggedUser) => loggedUser.username === newUser[0]);
+    if (newUserLogged) {
+      socketService.addUser(newUserLogged.socketID, chat.id);
+    }
+
     setNewUser('');
     setShowAddUserModal(!showAddUserModal);
   };
@@ -77,14 +85,25 @@ function Chat() {
       <div id="current-chat-messages">
         <ul>
           {chat.messages.map((msg) => (
-            <li key={msg.id} className={msg.user.username === user.username ? 'right-msg' : 'left-msg'}>
-              <div>
-                <p className="message">{msg.message}</p>
-                <p className="message-info">
-                  {`${msg.user.username}, ${msg.time}`}
-                </p>
-              </div>
-            </li>
+            <OverlayTrigger
+              key={msg.id}
+              placement={msg.user.username === user.username ? 'left' : 'right'}
+              overlay={(
+                <Tooltip id={msg.id}>
+                  <p className="tooltip-username">{msg.user.username}</p>
+                  <div className={loggedUsers.map((loggedUser) => loggedUser.username).includes(msg.user.username) ? 'circle user-logged' : 'circle user-not-logged'} />
+                </Tooltip>
+              )}
+            >
+              <li key={msg.id} className={msg.user.username === user.username ? 'right-msg' : 'left-msg'}>
+                <div>
+                  <p className="message">{msg.message}</p>
+                  <p className="message-info">
+                    {`${msg.user.username}, ${msg.time}`}
+                  </p>
+                </div>
+              </li>
+            </OverlayTrigger>
           ))}
         </ul>
       </div>

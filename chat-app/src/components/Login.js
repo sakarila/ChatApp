@@ -6,6 +6,7 @@ import { useHistory } from 'react-router-dom';
 import storageService from '../utils/storage';
 import { setUser } from '../reducers/userReducer';
 import userService from '../services/user';
+import socketService from '../services/socket';
 
 import '../styles/Auth.css';
 
@@ -29,6 +30,7 @@ function Login() {
     const user = await userService.login({ username, password });
     storageService.saveUser(user);
     dispatch(setUser(user));
+    socketService.logIn();
   };
 
   return (

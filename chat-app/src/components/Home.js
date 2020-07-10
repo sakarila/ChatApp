@@ -33,12 +33,14 @@ function Home() {
   const chats = useSelector((state) => state.chats.chats);
   const allUsers = useSelector((state) => state.users.users);
 
+  console.log(chats);
+
   const getChats = async (savedUser) => {
     const userChats = await chatService.getAllChats();
     const chatsWithTime = helperService.initMessageNotifications(savedUser, userChats);
     const chatIDs = userChats.map((chat) => chat.id);
 
-    socketService.subscribeChats(chatIDs);
+    socketService.subscribe(chatIDs);
     dispatch(setChats(chatsWithTime));
   };
 
@@ -66,6 +68,7 @@ function Home() {
     dispatch(setCurrentChat(null));
     dispatch(setChats([]));
     dispatch(setUser(null));
+    socketService.logOut();
   };
 
   const createChat = async (event) => {
@@ -81,6 +84,7 @@ function Home() {
 
     const newChat = await chatService.createChat(chatTitle, chatUsers);
     dispatch(addChat(newChat));
+    socketService.joinChat(newChat.id);
     setChatTitle('');
     setChatUsers([]);
     setShowModal(!showModal);

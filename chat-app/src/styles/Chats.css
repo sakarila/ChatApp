@@ -126,6 +126,36 @@ ul li{
   margin: 5px
 }
 
+.tooltip-inner {
+  background-color: skyblue;
+}
+
+.bs-tooltip-right .arrow::before { border-right-color: skyblue; }
+.bs-tooltip-left .arrow::before { border-left-color: skyblue; }
+
+
+.circle {
+  display: inline-block;
+  border-radius: 50%;
+  background-color: white;
+  height: 10px;
+  width: 10px;
+}
+
+.user-logged {
+  background-color: green;
+}
+
+.user-not-logged {
+  background-color: red;
+}
+
+.tooltip-username {
+  display: inline-block;
+  font-size: 15px;
+  margin: 5px;
+}
+
 #logOut-btn {
 }
 
