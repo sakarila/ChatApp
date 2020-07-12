@@ -102,6 +102,12 @@ ul li{
   border-radius: 10px;
 }
 
+.new-messages-line {
+  width: 100%;
+  border-bottom: black;
+  height: 2px
+}
+
 .right-msg {
   float: right;
   max-width: 45%;

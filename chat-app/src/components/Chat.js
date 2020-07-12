@@ -79,6 +79,11 @@ function Chat() {
     setShowAddUserModal(!showAddUserModal);
   };
 
+  const checkNewMessages = (msg) => {
+    const seenMessages = msg.seen;
+    return seenMessages.map((seenUser) => seenUser.username).includes(user.username) ? '' : 'New message';
+  };
+
   return (
     <div className="chatbox">
       <h1 className="current-chat-header">{chat.title}</h1>
@@ -99,7 +104,7 @@ function Chat() {
                 <div>
                   <p className="message">{msg.message}</p>
                   <p className="message-info">
-                    {`${msg.user.username}, ${msg.time}`}
+                    {`${msg.user.username}, ${msg.time}, ${checkNewMessages(msg)}`}
                   </p>
                 </div>
               </li>

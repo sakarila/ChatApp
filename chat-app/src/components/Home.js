@@ -9,7 +9,6 @@ import { Redirect } from 'react-router-dom';
 import Chat from './Chat';
 
 import storageService from '../utils/storage';
-import helperService from '../utils/helpers';
 
 import chatService from '../services/chat';
 import userService from '../services/user';
@@ -32,16 +31,16 @@ function Home() {
   const user = useSelector((state) => state.users.currentUser);
   const chats = useSelector((state) => state.chats.chats);
   const allUsers = useSelector((state) => state.users.users);
+  const loggedUsers = useSelector((state) => state.users.loggedUsers);
 
   console.log(chats);
 
-  const getChats = async (savedUser) => {
+  const getChats = async () => {
     const userChats = await chatService.getAllChats();
-    const chatsWithTime = helperService.initMessageNotifications(savedUser, userChats);
     const chatIDs = userChats.map((chat) => chat.id);
 
     socketService.subscribe(chatIDs);
-    dispatch(setChats(chatsWithTime));
+    dispatch(setChats(userChats));
   };
 
   const getUsers = async () => {
@@ -53,7 +52,7 @@ function Home() {
     const savedUser = storageService.loadUser();
 
     dispatch(setUser(savedUser));
-    getChats(savedUser);
+    getChats();
     getUsers();
 
     return async () => {
@@ -85,6 +84,16 @@ function Home() {
     const newChat = await chatService.createChat(chatTitle, chatUsers);
     dispatch(addChat(newChat));
     socketService.joinChat(newChat.id);
+
+    loggedUsers.forEach((loggedUser) => {
+      if (loggedUser.username !== user.username) {
+        socketService.addUser(loggedUser.socketID, newChat.id);
+      }
+    });
+
+    const newCurrentChat = await chatService.getCurrentChat(newChat.id);
+    dispatch(setCurrentChat(newCurrentChat));
+
     setChatTitle('');
     setChatUsers([]);
     setShowModal(!showModal);
