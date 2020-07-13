@@ -8,7 +8,9 @@ import { animateScroll } from 'react-scroll';
 
 import chatService from '../services/chat';
 import socketService from '../services/socket';
-import { addMessage, addUser } from '../reducers/chatReducer';
+import {
+  addMessage, addUser, removeUserFromChat, setCurrentChat,
+} from '../reducers/chatReducer';
 
 function Chat() {
   const dispatch = useDispatch();
@@ -16,6 +18,7 @@ function Chat() {
   const [message, setMessage] = useState('');
   const [newUser, setNewUser] = useState('');
   const [showAddUserModal, setShowAddUserModal] = useState(false);
+  const [showLeaveChatModal, setShowLeaveChatModal] = useState(false);
 
   const chat = useSelector((state) => state.chats.currentChat);
   const user = useSelector((state) => state.users.currentUser);
@@ -79,6 +82,14 @@ function Chat() {
     setShowAddUserModal(!showAddUserModal);
   };
 
+  const leaveChat = async (chatID) => {
+    const updatedChat = await chatService.removeUserFromChat(chatID);
+    dispatch(removeUserFromChat(updatedChat.chatID));
+    dispatch(setCurrentChat(null));
+
+    socketService.leaveChat(updatedChat.id);
+  };
+
   const checkNewMessages = (msg) => {
     const seenMessages = msg.seen;
     return seenMessages.map((seenUser) => seenUser.username).includes(user.username) ? '' : 'New message';
@@ -121,6 +132,9 @@ function Chat() {
           <InputGroup.Append>
             <Button className="input-btn" variant="primary" onClick={() => setShowAddUserModal(!showAddUserModal)}>Add user</Button>
           </InputGroup.Append>
+          <InputGroup.Append>
+            <Button variant="primary" type="submit" onClick={() => setShowLeaveChatModal(!showLeaveChatModal)}>Leave chat</Button>
+          </InputGroup.Append>
         </InputGroup>
       </Form>
       <Modal
@@ -143,6 +157,21 @@ function Chat() {
               Add user
             </Button>
           </Form>
+        </Modal.Body>
+      </Modal>
+      <Modal
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        show={showLeaveChatModal}
+        onHide={() => setShowLeaveChatModal(!showLeaveChatModal)}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Are you sure you want to leave?
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Button variant="primary" type="submit" onClick={() => leaveChat(chat.id)}>Leave</Button>
         </Modal.Body>
       </Modal>
     </div>

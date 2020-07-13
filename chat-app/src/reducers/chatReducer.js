@@ -38,6 +38,8 @@ const chatReducer = (state = initialState, action) => {
         ...state,
         chats: updateMessageNotification(''),
       };
+    case 'REMOVE_USER':
+      return { ...state, chats: state.chats.filter((chat) => chat.id !== action.payload) };
     default: return state;
   }
 };
@@ -74,6 +76,11 @@ export const addMessageNotification = (chatID) => ({
 
 export const removeMessageNotification = (chatID) => ({
   type: 'REMOVE_MESSAGE_NOTIFICATION',
+  payload: chatID,
+});
+
+export const removeUserFromChat = (chatID) => ({
+  type: 'REMOVE_USER',
   payload: chatID,
 });
 

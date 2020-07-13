@@ -21,10 +21,13 @@ const joinChat = (chatID) => {
   socket.emit('join-chat', { chatID });
 };
 
+const leaveChat = (chatID) => {
+  socket.emit('leave-chat', { chatID });
+};
+
 socket.on('new-chat', ((chat) => {
   store.dispatch(addChat({ ...chat, messageNotification: '' }));
   joinChat(chat.id);
-  // tässä dispatchataan käyttäjän chatteihin tää uus chatti
 }));
 
 socket.on('user-logged', ((users) => {
@@ -59,5 +62,5 @@ const logIn = () => {
 };
 
 export default {
-  subscribe, sendMessage, logOut, logIn, addUser, joinChat,
+  subscribe, sendMessage, logOut, logIn, addUser, joinChat, leaveChat,
 };

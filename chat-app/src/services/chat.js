@@ -45,6 +45,11 @@ const addUserToChat = async (username, chatID) => {
   return response.data;
 };
 
+const removeUserFromChat = async (chatID) => {
+  const response = await axios.delete(`${baseUrl}/chat/${chatID}`, getConfig());
+  return response.data;
+};
+
 export default {
-  getAllChats, createChat, getCurrentChat, postNewMessage, addUserToChat,
+  getAllChats, createChat, getCurrentChat, postNewMessage, addUserToChat, removeUserFromChat,
 };
