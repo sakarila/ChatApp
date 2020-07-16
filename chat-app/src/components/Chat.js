@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import {
-  Button, Form, Modal, InputGroup, OverlayTrigger, Tooltip,
+  Button, Form, Modal, InputGroup, OverlayTrigger, Tooltip, Dropdown, DropdownButton,
 } from 'react-bootstrap';
 import { animateScroll } from 'react-scroll';
+import PropTypes from 'prop-types';
 
 import chatService from '../services/chat';
 import socketService from '../services/socket';
@@ -12,7 +13,7 @@ import {
   addMessage, addUser, removeUserFromChat, setCurrentChat,
 } from '../reducers/chatReducer';
 
-function Chat() {
+function Chat(props) {
   const dispatch = useDispatch();
 
   const [message, setMessage] = useState('');
@@ -24,8 +25,6 @@ function Chat() {
   const user = useSelector((state) => state.users.currentUser);
   const users = useSelector((state) => state.users.users);
   const loggedUsers = useSelector((state) => state.users.loggedUsers);
-
-  console.log(chat);
 
   const scrollToBottom = () => {
     animateScroll.scrollToBottom({
@@ -43,10 +42,16 @@ function Chat() {
       return;
     }
 
-    const newMessage = await chatService.postNewMessage(chat.id, message);
-    socketService.sendMessage(newMessage.id, chat.id);
-    dispatch(addMessage(newMessage));
-    setMessage('');
+    try {
+      const newMessage = await chatService.postNewMessage(chat.id, message);
+      socketService.sendMessage(newMessage.id, chat.id);
+      dispatch(addMessage(newMessage));
+      setMessage('');
+    } catch (error) {
+      setMessage('');
+      props.setAlertMessage(`${error.response.data.error}`);
+      props.setShowAlert(true);
+    }
   };
 
   if (!chat) {
@@ -66,28 +71,42 @@ function Chat() {
   const addUsertoChat = async (event) => {
     event.preventDefault();
     if (!newUser) {
-      console.log('Kehotetaan käyttäjää valitsemaan lisättävä käyttäjä');
+      props.setAlertMessage('Please provide a valid username!');
+      props.setShowAlert(true);
       return;
     }
 
-    const addedUser = await chatService.addUserToChat(newUser, chat.id);
-    dispatch(addUser(addedUser));
+    try {
+      const addedUser = await chatService.addUserToChat(newUser, chat.id);
+      dispatch(addUser(addedUser));
 
-    const newUserLogged = loggedUsers.find((loggedUser) => loggedUser.username === newUser[0]);
-    if (newUserLogged) {
-      socketService.addUser(newUserLogged.socketID, chat.id);
+      const newUserLogged = loggedUsers.find((loggedUser) => loggedUser.username === newUser[0]);
+      if (newUserLogged) {
+        socketService.addUser(newUserLogged.socketID, chat.id);
+      }
+
+      setNewUser('');
+      setShowAddUserModal(!showAddUserModal);
+    } catch (error) {
+      setNewUser('');
+      props.setAlertMessage(`${error.response.data.error}`);
+      props.setShowAlert(true);
     }
-
-    setNewUser('');
-    setShowAddUserModal(!showAddUserModal);
   };
 
   const leaveChat = async (chatID) => {
-    const updatedChat = await chatService.removeUserFromChat(chatID);
-    dispatch(removeUserFromChat(updatedChat.chatID));
-    dispatch(setCurrentChat(null));
+    try {
+      const updatedChat = await chatService.removeUserFromChat(chatID);
+      dispatch(removeUserFromChat(updatedChat.chatID));
+      dispatch(setCurrentChat(null));
+      setShowLeaveChatModal(false);
 
-    socketService.leaveChat(updatedChat.id);
+      socketService.leaveChat(updatedChat.id);
+    } catch (error) {
+      props.setAlertMessage(`${error.response.data.error}`);
+      props.setShowAlert(true);
+      setShowLeaveChatModal(false);
+    }
   };
 
   const checkNewMessages = (msg) => {
@@ -130,10 +149,10 @@ function Chat() {
             <Button className="input-btn" variant="primary" type="submit">Send</Button>
           </InputGroup.Append>
           <InputGroup.Append>
-            <Button className="input-btn" variant="primary" onClick={() => setShowAddUserModal(!showAddUserModal)}>Add user</Button>
-          </InputGroup.Append>
-          <InputGroup.Append>
-            <Button variant="primary" type="submit" onClick={() => setShowLeaveChatModal(!showLeaveChatModal)}>Leave chat</Button>
+            <DropdownButton id="dropdown-variants-primary" className="input-btn" title="Options">
+              <Dropdown.Item as="button" onClick={() => setShowAddUserModal(!showAddUserModal)}>Add user</Dropdown.Item>
+              <Dropdown.Item as="button" onClick={() => setShowLeaveChatModal(!showLeaveChatModal)}>Leave chat</Dropdown.Item>
+            </DropdownButton>
           </InputGroup.Append>
         </InputGroup>
       </Form>
@@ -177,5 +196,10 @@ function Chat() {
     </div>
   );
 }
+
+Chat.propTypes = {
+  setShowAlert: PropTypes.func.isRequired,
+  setAlertMessage: PropTypes.func.isRequired,
+};
 
 export default Chat;

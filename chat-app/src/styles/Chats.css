@@ -96,7 +96,6 @@ ul li{
 
 .input-btn {
   margin-left: 10px;
-  background-color: steelblue;
   color: white;
   border: none;
   border-radius: 10px;
@@ -167,4 +166,9 @@ ul li{
 
 #createChat-btn {
   float: right;
+}
+
+.btn-primary {
+  background-color: steelblue;
+  border-color: steelblue;
 }

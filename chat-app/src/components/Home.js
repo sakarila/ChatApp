@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Button, Image, Modal, Form,
+  Button, Image, Modal, Form, Alert,
 } from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,6 +27,8 @@ function Home() {
   const [chatTitle, setChatTitle] = useState('');
   const [chatUsers, setChatUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
 
   const user = useSelector((state) => state.users.currentUser);
   const chats = useSelector((state) => state.chats.chats);
@@ -36,16 +38,26 @@ function Home() {
   console.log(chats);
 
   const getChats = async () => {
-    const userChats = await chatService.getAllChats();
-    const chatIDs = userChats.map((chat) => chat.id);
+    try {
+      const userChats = await chatService.getAllChats();
+      const chatIDs = userChats.map((chat) => chat.id);
 
-    socketService.subscribe(chatIDs);
-    dispatch(setChats(userChats));
+      socketService.subscribe(chatIDs);
+      dispatch(setChats(userChats));
+    } catch (error) {
+      setAlertMessage(`${error.response.data.error}`);
+      setShowAlert(true);
+    }
   };
 
   const getUsers = async () => {
-    const users = await userService.getAllUsers();
-    dispatch(setAllUsers(users));
+    try {
+      const users = await userService.getAllUsers();
+      dispatch(setAllUsers(users));
+    } catch (error) {
+      setAlertMessage(`${error.response.data.error}`);
+      setShowAlert(true);
+    }
   };
 
   useEffect(() => {
@@ -73,36 +85,54 @@ function Home() {
   const createChat = async (event) => {
     event.preventDefault();
     if (!chatTitle) {
-      console.log('Huono input otsikolle');
-      return;
-    }
-    if (!chatUsers.length >= 1) {
-      console.log('Huono input käyttäjille');
-      return;
-    }
+      setAlertMessage('Please provide a valid title for the chat!');
+      setShowAlert(true);
+    } else if (!chatUsers.length >= 1) {
+      setAlertMessage('Please add at least one valid user to the chat!');
+      setShowAlert(true);
+    } else {
+      try {
+        const newChat = await chatService.createChat(chatTitle, chatUsers);
+        dispatch(addChat(newChat));
+        socketService.joinChat(newChat.id);
 
-    const newChat = await chatService.createChat(chatTitle, chatUsers);
-    dispatch(addChat(newChat));
-    socketService.joinChat(newChat.id);
+        loggedUsers.forEach((loggedUser) => {
+          if (loggedUser.username !== user.username) {
+            socketService.addUser(loggedUser.socketID, newChat.id);
+          }
+        });
 
-    loggedUsers.forEach((loggedUser) => {
-      if (loggedUser.username !== user.username) {
-        socketService.addUser(loggedUser.socketID, newChat.id);
+        const newCurrentChat = await chatService.getCurrentChat(newChat.id);
+        dispatch(setCurrentChat(newCurrentChat));
+
+        setChatTitle('');
+        setChatUsers([]);
+        setShowModal(!showModal);
+      } catch (error) {
+        setAlertMessage(`${error.response.data.error}`);
+        setShowAlert(true);
+
+        setChatTitle('');
+        setChatUsers([]);
+        setShowModal(!showModal);
       }
-    });
-
-    const newCurrentChat = await chatService.getCurrentChat(newChat.id);
-    dispatch(setCurrentChat(newCurrentChat));
-
-    setChatTitle('');
-    setChatUsers([]);
-    setShowModal(!showModal);
+    }
   };
 
   const selectChat = async (chatID) => {
-    const currentChat = await chatService.getCurrentChat(chatID);
-    dispatch(removeMessageNotification(chatID));
-    dispatch(setCurrentChat(currentChat));
+    try {
+      const currentChat = await chatService.getCurrentChat(chatID);
+      dispatch(removeMessageNotification(chatID));
+      dispatch(setCurrentChat(currentChat));
+    } catch (error) {
+      setAlertMessage(`${error.response.data.error}`);
+      setShowAlert(true);
+    }
+  };
+
+  const closeAlert = () => {
+    setShowAlert(false);
+    setAlertMessage('');
   };
 
   if (!user) {
@@ -156,22 +186,38 @@ function Home() {
           </Modal.Body>
         </Modal>
       </div>
-      <div className="chatContainerBody">
-        <div className="chat-list">
-          <h1 className="chat-list-header">Chats</h1>
-          <div className="chat-list-body">
-            {chats.map((chat) => (
-              <Button className="chat-btn" key={chat.id} variant="primary" onClick={() => selectChat(chat.id)}>
-                {chat.title}
-                <p className="chat-message-notification">{chat.messageNotification}</p>
-              </Button>
-            ))}
+      {showAlert
+        ? (
+          <Alert variant="danger" show={showAlert} onClose={closeAlert} dismissible>
+            <Alert.Heading>Error!</Alert.Heading>
+            <p>
+              {alertMessage}
+            </p>
+          </Alert>
+        )
+        : (
+          <div className="chatContainerBody">
+            <div className="chat-list">
+              <h1 className="chat-list-header">Chats</h1>
+              <div className="chat-list-body">
+                {chats.map((chat) => (
+                  <Button className="chat-btn" key={chat.id} variant="primary" onClick={() => selectChat(chat.id)}>
+                    {chat.title}
+                    <p className="chat-message-notification">{chat.messageNotification}</p>
+                  </Button>
+                ))}
+              </div>
+            </div>
+            <div className="current-chat">
+              <Chat
+                showAlert={showAlert}
+                setShowAlert={setShowAlert}
+                alertMessage={alertMessage}
+                setAlertMessage={setAlertMessage}
+              />
+            </div>
           </div>
-        </div>
-        <div className="current-chat">
-          <Chat />
-        </div>
-      </div>
+        )}
     </div>
   );
 }
