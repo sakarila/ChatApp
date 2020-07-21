@@ -20,6 +20,7 @@ function Chat(props) {
   const [newUser, setNewUser] = useState('');
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [showLeaveChatModal, setShowLeaveChatModal] = useState(false);
+  const [scrollBottom, setScrollBottom] = useState(true);
 
   const chat = useSelector((state) => state.chats.currentChat);
   const user = useSelector((state) => state.users.currentUser);
@@ -27,14 +28,15 @@ function Chat(props) {
   const loggedUsers = useSelector((state) => state.users.loggedUsers);
 
   const scrollToBottom = () => {
-    animateScroll.scrollToBottom({
-      containerId: 'current-chat-messages',
-    });
+    if (scrollBottom) {
+      animateScroll.scrollToBottom({ containerId: 'current-chat-messages' });
+    }
   };
 
   useEffect(() => {
+    console.log('tila päivittyy');
     scrollToBottom();
-  });
+  }, [chat, loggedUsers]);
 
   const createMessage = async (event) => {
     event.preventDefault();
@@ -114,10 +116,30 @@ function Chat(props) {
     return seenMessages.map((seenUser) => seenUser.username).includes(user.username) ? '' : 'New message';
   };
 
+  const handleScrollToTop = async (event) => {
+    const element = event.target;
+    if (element.scrollTop === 0 && chat.messages.length >= 50) {
+      try {
+        const currentChat = await chatService.getCurrentChat(chat.id, chat.messages.length);
+        if (currentChat.messages.length !== chat.messages.length) {
+          setScrollBottom(false);
+          dispatch(setCurrentChat(currentChat));
+          animateScroll.scrollTo(element.clientHeight, { containerId: 'current-chat-messages', duration: 0 });
+        }
+        setScrollBottom(true);
+      } catch (error) {
+        console.log(error);
+        setMessage('');
+        props.setAlertMessage(`${error.response.data.error}`);
+        props.setShowAlert(true);
+      }
+    }
+  };
+
   return (
     <div className="chatbox">
       <h1 className="current-chat-header">{chat.title}</h1>
-      <div id="current-chat-messages">
+      <div id="current-chat-messages" onScroll={handleScrollToTop}>
         <ul>
           {chat.messages.map((msg) => (
             <OverlayTrigger

@@ -28,8 +28,8 @@ const createChat = async (title, users) => {
   return response.data;
 };
 
-const getCurrentChat = async (chatID) => {
-  const response = await axios.get(`${baseUrl}/${chatID}`, getConfig());
+const getCurrentChat = async (chatID, numOfMessages) => {
+  const response = await axios.get(`${baseUrl}/${chatID}/${numOfMessages}`, getConfig());
   const dateFormattedMessages = dateFormatting(response.data.messages);
   return { ...response.data, messages: dateFormattedMessages };
 };
