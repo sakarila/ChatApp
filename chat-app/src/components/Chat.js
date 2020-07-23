@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import chatService from '../services/chat';
 import socketService from '../services/socket';
 import {
-  addMessage, addUser, removeUserFromChat, setCurrentChat,
+  addMessage, addUser, removeUserFromChat, setCurrentChat, addMessages,
 } from '../reducers/chatReducer';
 
 function Chat(props) {
@@ -26,6 +26,8 @@ function Chat(props) {
   const user = useSelector((state) => state.users.currentUser);
   const users = useSelector((state) => state.users.users);
   const loggedUsers = useSelector((state) => state.users.loggedUsers);
+
+  console.log(chat);
 
   const scrollToBottom = () => {
     if (scrollBottom) {
@@ -120,13 +122,13 @@ function Chat(props) {
     const element = event.target;
     if (element.scrollTop === 0 && chat.messages.length >= 50) {
       try {
-        const currentChat = await chatService.getCurrentChat(chat.id, chat.messages.length);
-        if (currentChat.messages.length !== chat.messages.length) {
+        const messages = await chatService.getMoreMessages(chat.id, chat.messages.length);
+        if (messages.length !== 0) {
           setScrollBottom(false);
-          dispatch(setCurrentChat(currentChat));
+          dispatch(addMessages(messages));
           animateScroll.scrollTo(element.clientHeight, { containerId: 'current-chat-messages', duration: 0 });
+          setScrollBottom(true);
         }
-        setScrollBottom(true);
       } catch (error) {
         console.log(error);
         setMessage('');

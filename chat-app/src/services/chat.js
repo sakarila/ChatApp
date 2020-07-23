@@ -28,10 +28,17 @@ const createChat = async (title, users) => {
   return response.data;
 };
 
-const getCurrentChat = async (chatID, numOfMessages) => {
-  const response = await axios.get(`${baseUrl}/${chatID}/${numOfMessages}`, getConfig());
+const getCurrentChat = async (chatID) => {
+  const response = await axios.get(`${baseUrl}/${chatID}`, getConfig());
   const dateFormattedMessages = dateFormatting(response.data.messages);
   return { ...response.data, messages: dateFormattedMessages };
+};
+
+const getMoreMessages = async (chatID, numOfMessages) => {
+  const response = await axios.get(`${baseUrl}/${chatID}/${numOfMessages}`, getConfig());
+  console.log(response.data);
+  const dateFormattedMessages = dateFormatting(response.data.messages);
+  return dateFormattedMessages;
 };
 
 const postNewMessage = async (chatID, message) => {
@@ -51,5 +58,11 @@ const removeUserFromChat = async (chatID) => {
 };
 
 export default {
-  getAllChats, createChat, getCurrentChat, postNewMessage, addUserToChat, removeUserFromChat,
+  getAllChats,
+  createChat,
+  getCurrentChat,
+  postNewMessage,
+  addUserToChat,
+  removeUserFromChat,
+  getMoreMessages,
 };

@@ -121,7 +121,7 @@ function Home() {
 
   const selectChat = async (chatID) => {
     try {
-      const currentChat = await chatService.getCurrentChat(chatID, 0);
+      const currentChat = await chatService.getCurrentChat(chatID);
       dispatch(removeMessageNotification(chatID));
       dispatch(setCurrentChat(currentChat));
     } catch (error) {
