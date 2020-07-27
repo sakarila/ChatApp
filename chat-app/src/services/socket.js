@@ -2,6 +2,7 @@ import io from 'socket.io-client';
 import moment from 'moment';
 
 import store from '../store';
+import chatService from './chat';
 import { addMessage, addMessageNotification, addChat } from '../reducers/chatReducer';
 import { setLoggedUsers } from '../reducers/userReducer';
 
@@ -10,8 +11,16 @@ const socket = io('http://localhost:3001');
 socket.on('new-message', (({ message, chatID }) => {
   const state = store.getState();
   if (state.chats.currentChat && state.chats.currentChat.id === chatID) {
-    const dateFormattedMessage = { ...message, time: moment(message.time).format('DD.MM.YYYY HH:mm:ss') };
+    const dateFormattedMessage = {
+      ...message,
+      seen: message.seen.concat({
+        username: state.users.currentUser.username,
+        id: state.users.currentUser.id,
+      }),
+      time: moment(message.time).format('DD.MM.YYYY HH:mm:ss'),
+    };
     store.dispatch(addMessage(dateFormattedMessage));
+    chatService.markMessageSeen(message.id);
   } else {
     store.dispatch(addMessageNotification(chatID));
   }

@@ -57,6 +57,11 @@ const removeUserFromChat = async (chatID) => {
   return response.data;
 };
 
+const markMessageSeen = async (messageID) => {
+  const response = await axios.put(`${baseUrl}/message/${messageID}`, {}, getConfig());
+  return response.data;
+};
+
 export default {
   getAllChats,
   createChat,
@@ -65,4 +70,5 @@ export default {
   addUserToChat,
   removeUserFromChat,
   getMoreMessages,
+  markMessageSeen,
 };

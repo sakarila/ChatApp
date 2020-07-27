@@ -28,6 +28,7 @@ function Chat(props) {
   const loggedUsers = useSelector((state) => state.users.loggedUsers);
 
   console.log(chat);
+  console.log(user);
 
   const scrollToBottom = () => {
     if (scrollBottom) {
