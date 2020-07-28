@@ -5,9 +5,14 @@ import store from '../store';
 
 const baseUrl = 'http://localhost:3001/api/chat';
 
-const dateFormatting = (messages) => {
+const formatMessageDates = (messages) => {
   const newMessages = messages.map((message) => ({ ...message, time: moment(message.time).format('DD.MM.YYYY HH:mm:ss') }));
   return newMessages;
+};
+
+const formatLastLoginDate = (users) => {
+  const newUsers = users.map((user) => ({ ...user, lastLogin: moment(user.lastLogin).format('DD.MM.YYYY HH:mm:ss') }));
+  return newUsers;
 };
 
 const getConfig = () => {
@@ -30,14 +35,14 @@ const createChat = async (title, users) => {
 
 const getCurrentChat = async (chatID) => {
   const response = await axios.get(`${baseUrl}/${chatID}`, getConfig());
-  const dateFormattedMessages = dateFormatting(response.data.messages);
-  return { ...response.data, messages: dateFormattedMessages };
+  const dateFormattedMessages = formatMessageDates(response.data.messages);
+  const dateFormattedUsers = formatLastLoginDate(response.data.users);
+  return { ...response.data, messages: dateFormattedMessages, users: dateFormattedUsers };
 };
 
 const getMoreMessages = async (chatID, numOfMessages) => {
   const response = await axios.get(`${baseUrl}/${chatID}/${numOfMessages}`, getConfig());
-  console.log(response.data);
-  const dateFormattedMessages = dateFormatting(response.data.messages);
+  const dateFormattedMessages = formatMessageDates(response.data.messages);
   return dateFormattedMessages;
 };
 

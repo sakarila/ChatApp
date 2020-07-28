@@ -33,7 +33,6 @@ function Login() {
 
     try {
       const user = await userService.login({ username, password });
-      console.log(user);
       storageService.saveUser(user);
       dispatch(setUser(user));
       socketService.logIn();

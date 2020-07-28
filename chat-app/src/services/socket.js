@@ -3,7 +3,9 @@ import moment from 'moment';
 
 import store from '../store';
 import chatService from './chat';
-import { addMessage, addMessageNotification, addChat } from '../reducers/chatReducer';
+import {
+  addMessage, addMessageNotification, addChat, updateUsersLastLogin,
+} from '../reducers/chatReducer';
 import { setLoggedUsers } from '../reducers/userReducer';
 
 const socket = io('http://localhost:3001');
@@ -44,6 +46,17 @@ socket.on('user-logged', ((users) => {
 }));
 
 socket.on('user-left', ((users) => {
+  const state = store.getState();
+  const { loggedUsers } = state.users;
+  const leavingUser = loggedUsers.filter((loggedUser) => users.map((user) => user.username)
+    .indexOf(loggedUser.username) === -1);
+
+  if (state.chats.currentChat) {
+    if (state.chats.currentChat.users.map((user) => user.username)
+      .includes(leavingUser[0].username)) {
+      store.dispatch(updateUsersLastLogin(leavingUser[0].username));
+    }
+  }
   store.dispatch(setLoggedUsers(users));
 }));
 

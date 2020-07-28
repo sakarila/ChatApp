@@ -35,8 +35,6 @@ function Home() {
   const allUsers = useSelector((state) => state.users.users);
   const loggedUsers = useSelector((state) => state.users.loggedUsers);
 
-  console.log(chats);
-
   const getChats = async () => {
     try {
       const userChats = await chatService.getAllChats();

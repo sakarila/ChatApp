@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Typeahead } from 'react-bootstrap-typeahead';
@@ -18,6 +19,7 @@ function Chat(props) {
 
   const [message, setMessage] = useState('');
   const [newUser, setNewUser] = useState('');
+  const [showUsersModal, setShowUsersModal] = useState(false);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [showLeaveChatModal, setShowLeaveChatModal] = useState(false);
   const [scrollBottom, setScrollBottom] = useState(true);
@@ -27,8 +29,8 @@ function Chat(props) {
   const users = useSelector((state) => state.users.users);
   const loggedUsers = useSelector((state) => state.users.loggedUsers);
 
+  console.log(loggedUsers);
   console.log(chat);
-  console.log(user);
 
   const scrollToBottom = () => {
     if (scrollBottom) {
@@ -37,7 +39,6 @@ function Chat(props) {
   };
 
   useEffect(() => {
-    console.log('tila päivittyy');
     scrollToBottom();
   }, [chat, loggedUsers]);
 
@@ -131,7 +132,6 @@ function Chat(props) {
           setScrollBottom(true);
         }
       } catch (error) {
-        console.log(error);
         setMessage('');
         props.setAlertMessage(`${error.response.data.error}`);
         props.setShowAlert(true);
@@ -175,6 +175,7 @@ function Chat(props) {
           </InputGroup.Append>
           <InputGroup.Append>
             <DropdownButton id="dropdown-variants-primary" className="input-btn" title="Options">
+              <Dropdown.Item as="button" onClick={() => setShowUsersModal(!showUsersModal)}>Show users</Dropdown.Item>
               <Dropdown.Item as="button" onClick={() => setShowAddUserModal(!showAddUserModal)}>Add user</Dropdown.Item>
               <Dropdown.Item as="button" onClick={() => setShowLeaveChatModal(!showLeaveChatModal)}>Leave chat</Dropdown.Item>
             </DropdownButton>
@@ -216,6 +217,32 @@ function Chat(props) {
         </Modal.Header>
         <Modal.Body>
           <Button variant="primary" type="submit" onClick={() => leaveChat(chat.id)}>Leave</Button>
+        </Modal.Body>
+      </Modal>
+      <Modal
+        aria-labelledby="contained-modal-title-vcenter"
+        centered
+        show={showUsersModal}
+        onHide={() => setShowUsersModal(!showUsersModal)}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title id="contained-modal-title-vcenter">
+            Chat users
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div>
+            <ul>
+              {chat.users.map((chatUser) => (
+                <div key={chatUser.username}>
+                  <li key={chatUser.username}>
+                    {loggedUsers.map((loggedUser) => loggedUser.username).includes(chatUser.username)
+                      ? ` ${chatUser.username} is logged in!` : `${chatUser.username} last login ${chatUser.lastLogin}`}
+                  </li>
+                </div>
+              ))}
+            </ul>
+          </div>
         </Modal.Body>
       </Modal>
     </div>

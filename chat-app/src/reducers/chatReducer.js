@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 const initialState = {
   chats: [],
   currentChat: null,
@@ -8,6 +10,12 @@ const chatReducer = (state = initialState, action) => {
     ...chat,
     messageNotification: chat.id === action.payload ? notification : chat.messageNotification,
   }));
+
+  const updateLastLogin = (username) => {
+    const { users } = state.currentChat;
+    const updatedUsers = users.map((user) => (user.username === username ? { ...user, lastLogin: moment(new Date()).format('DD.MM.YYYY HH:mm:ss') } : user));
+    return updatedUsers;
+  };
 
   switch (action.type) {
     case 'SET_CHATS':
@@ -46,6 +54,12 @@ const chatReducer = (state = initialState, action) => {
       };
     case 'REMOVE_USER':
       return { ...state, chats: state.chats.filter((chat) => chat.id !== action.payload) };
+    case 'UPDATE_LOGIN':
+      return {
+        ...state,
+        currentChat:
+        { ...state.currentChat, users: updateLastLogin(action.payload) },
+      };
     default: return state;
   }
 };
@@ -93,6 +107,11 @@ export const removeMessageNotification = (chatID) => ({
 export const removeUserFromChat = (chatID) => ({
   type: 'REMOVE_USER',
   payload: chatID,
+});
+
+export const updateUsersLastLogin = (username) => ({
+  type: 'UPDATE_LOGIN',
+  payload: username,
 });
 
 export default chatReducer;
