@@ -36,6 +36,12 @@ const updateLastLogin = async () => {
   return null;
 };
 
+const getLoggedUsers = async () => {
+  const response = await axios.get('http://localhost:3001/api/loggedUsers');
+  return response.data;
+};
+
+
 export default {
-  login, signup, getAllUsers, updateLastLogin,
+  login, signup, getAllUsers, updateLastLogin, getLoggedUsers
 };

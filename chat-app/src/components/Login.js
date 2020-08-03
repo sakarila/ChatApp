@@ -20,13 +20,14 @@ function Login() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    if (!username) {
-      setAlertMessage('Please provide a valid username!');
+    const loggedUsers = await userService.getLoggedUsers();
+    if (!username || !password) {
+      setAlertMessage('Please provide a valid username and password!');
       setShowAlert(true);
       return;
     }
-    if (!password) {
-      setAlertMessage('Please provide a valid password!');
+    if (loggedUsers.includes(username)) {
+      setAlertMessage('You are already logged in!');
       setShowAlert(true);
       return;
     }
