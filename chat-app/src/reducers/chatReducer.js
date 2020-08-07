@@ -34,7 +34,7 @@ const chatReducer = (state = initialState, action) => {
       return {
         ...state,
         currentChat:
-        { ...state.currentChat, messages: state.currentChat.messages.concat(action.payload) },
+        { ...state.currentChat, messages: action.payload.concat(state.currentChat.messages) },
       };
     case 'ADD_USER':
       return {

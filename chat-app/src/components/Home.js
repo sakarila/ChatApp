@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Button, Image, Modal, Form, Alert,
+  Button, Modal, Form, Alert,
 } from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import { useDispatch, useSelector } from 'react-redux';
@@ -142,7 +142,7 @@ function Home() {
   return (
     <div className="chatsContainer">
       <div className="chatContainerHeader">
-        <Image src="" roundedCircle />
+        <h1 className="header">Welcome to ChatApp!</h1>
         <Button className="input-btn" id="logOut-btn" onClick={logOut}>Log out</Button>
         <Button className="input-btn" id="createChat-btn" onClick={() => setShowModal(!showModal)}>Create chat</Button>
 
@@ -164,7 +164,7 @@ function Home() {
             </p>
             <Form onSubmit={createChat}>
               <Form.Group>
-                <Form.Control maxLength={60} type="text" id="chatTitle" placeholder="Type a name for the chat" value={chatTitle} onChange={({ target }) => setChatTitle(target.value)} />
+                <Form.Control maxLength={50} type="text" id="chatTitle" placeholder="Type a name for the chat" value={chatTitle} onChange={({ target }) => setChatTitle(target.value)} />
               </Form.Group>
               <Form.Group>
                 <Typeahead

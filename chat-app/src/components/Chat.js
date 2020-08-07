@@ -33,8 +33,21 @@ function Chat(props) {
   console.log(chat);
 
   const scrollToBottom = () => {
-    if (scrollBottom) {
-      animateScroll.scrollToBottom({ containerId: 'current-chat-messages' });
+    if(scrollBottom) {
+      const newMessagesElement = document.getElementById('NewMessages');
+      console.log(newMessagesElement)
+      if (newMessagesElement) {
+        const currentChatElement = document.getElementById('current-chat-messages');
+        console.log(currentChatElement)
+        console.log(currentChatElement.scrollHeight)
+        console.log(newMessagesElement)
+        console.log(newMessagesElement.scrollHeight)
+          const scrollTarget = currentChatElement.scrollHeight - newMessagesElement.scrollHeight
+          console.log(scrollTarget)
+          animateScroll.scrollTo(scrollTarget, { containerId: 'current-chat-messages', duration: 0 });
+      } else {
+          animateScroll.scrollToBottom({ containerId: 'current-chat-messages' });
+      }
     }
   };
 
@@ -115,9 +128,15 @@ function Chat(props) {
     }
   };
 
-  const checkNewMessages = (msg) => {
-    const seenMessages = msg.seen;
-    return seenMessages.map((seenUser) => seenUser.username).includes(user.username) ? '' : 'New message';
+  const checkFirstNewMessage = (msg) => {
+    const firstNewMessage = chat.messages.slice().find((message) => {
+      const seenUsers = message.seen.map((user) => user.username)
+      return !seenUsers.includes(user.username)
+    })
+    if (firstNewMessage && firstNewMessage.id === msg.id) {
+      return true;
+    }
+    return false;
   };
 
   const handleScrollToTop = async (event) => {
@@ -128,7 +147,7 @@ function Chat(props) {
         if (messages.length !== 0) {
           setScrollBottom(false);
           dispatch(addMessages(messages));
-          animateScroll.scrollTo(element.clientHeight, { containerId: 'current-chat-messages', duration: 0 });
+          animateScroll.scrollTo(element.scrollHeight, { containerId: 'current-chat-messages', duration: 0 });
           setScrollBottom(true);
         }
       } catch (error) {
@@ -145,25 +164,28 @@ function Chat(props) {
       <div id="current-chat-messages" onScroll={handleScrollToTop}>
         <ul>
           {chat.messages.map((msg) => (
-            <OverlayTrigger
-              key={msg.id}
-              placement={msg.user.username === user.username ? 'left' : 'right'}
-              overlay={(
-                <Tooltip id={msg.id}>
-                  <p className="tooltip-username">{msg.user.username}</p>
-                  <div className={loggedUsers.map((loggedUser) => loggedUser.username).includes(msg.user.username) ? 'circle user-logged' : 'circle user-not-logged'} />
-                </Tooltip>
-              )}
-            >
-              <li key={msg.id} className={msg.user.username === user.username ? 'right-msg' : 'left-msg'}>
-                <div>
-                  <p className="message">{msg.message}</p>
-                  <p className="message-info">
-                    {`${msg.user.username}, ${msg.time}, ${checkNewMessages(msg)}`}
-                  </p>
-                </div>
-              </li>
-            </OverlayTrigger>
+            <div key={msg.id}>
+              {checkFirstNewMessage(msg) ? <li className='dashed' id="NewMessages"> <span>New Messages!</span> </li> : ''}
+              <OverlayTrigger
+                key={msg.id}
+                placement={msg.user.username === user.username ? 'left' : 'right'}
+                overlay={(
+                  <Tooltip id={msg.id}>
+                    <p className="tooltip-username">{msg.user.username}</p>
+                    <div className={loggedUsers.map((loggedUser) => loggedUser.username).includes(msg.user.username) ? 'circle user-logged' : 'circle user-not-logged'} />
+                  </Tooltip>
+                )}
+              >
+                <li key={msg.id} className={msg.user.username === user.username ? 'right-msg' : 'left-msg'}>
+                  <div >
+                    <p className="message">{msg.message}</p>
+                    <p className="message-info">
+                      {`${msg.user.username}, ${msg.time}`}
+                    </p>
+                  </div>
+                </li>
+              </OverlayTrigger>
+            </div>
           ))}
         </ul>
       </div>
@@ -237,7 +259,7 @@ function Chat(props) {
                 <div key={chatUser.username}>
                   <li key={chatUser.username}>
                     {loggedUsers.map((loggedUser) => loggedUser.username).includes(chatUser.username)
-                      ? ` ${chatUser.username} is logged in!` : `${chatUser.username} last login ${chatUser.lastLogin}`}
+                      ? <div><strong>{chatUser.username}</strong> is logged in!</div> : <div><strong>{chatUser.username}</strong> last login {chatUser.lastLogin}</div>}
                   </li>
                 </div>
               ))}
