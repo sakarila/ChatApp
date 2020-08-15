@@ -3,7 +3,7 @@ import moment from 'moment';
 
 import store from '../store';
 
-const baseUrl = 'http://localhost:3001/api/chat';
+const baseUrl = 'http://ChatApp-backend-dev.eu-central-1.elasticbeanstalk.com/api/chat'
 
 const formatMessageDates = (messages) => {
   const newMessages = messages.map((message) => ({ ...message, time: moment(message.time).format('DD.MM.YYYY HH:mm:ss') }));

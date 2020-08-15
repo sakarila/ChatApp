@@ -5,7 +5,7 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import {
   Button, Form, Modal, InputGroup, OverlayTrigger, Tooltip, Dropdown, DropdownButton,
 } from 'react-bootstrap';
-import { animateScroll } from 'react-scroll';
+import { animateScroll, Element, scroller} from 'react-scroll';
 import PropTypes from 'prop-types';
 
 import chatService from '../services/chat';
@@ -29,22 +29,12 @@ function Chat(props) {
   const users = useSelector((state) => state.users.users);
   const loggedUsers = useSelector((state) => state.users.loggedUsers);
 
-  console.log(loggedUsers);
-  console.log(chat);
-
   const scrollToBottom = () => {
     if(scrollBottom) {
       const newMessagesElement = document.getElementById('NewMessages');
-      console.log(newMessagesElement)
       if (newMessagesElement) {
         const currentChatElement = document.getElementById('current-chat-messages');
-        console.log(currentChatElement)
-        console.log(currentChatElement.scrollHeight)
-        console.log(newMessagesElement)
-        console.log(newMessagesElement.scrollHeight)
-          const scrollTarget = currentChatElement.scrollHeight - newMessagesElement.scrollHeight
-          console.log(scrollTarget)
-          animateScroll.scrollTo(scrollTarget, { containerId: 'current-chat-messages', duration: 0 });
+        scroller.scrollTo('myScrollToElement', { containerId: 'current-chat-messages', duration: 50 });
       } else {
           animateScroll.scrollToBottom({ containerId: 'current-chat-messages' });
       }
@@ -53,7 +43,7 @@ function Chat(props) {
 
   useEffect(() => {
     scrollToBottom();
-  }, [chat, loggedUsers]);
+  }, [chat]);
 
   const createMessage = async (event) => {
     event.preventDefault();
@@ -146,8 +136,8 @@ function Chat(props) {
         const messages = await chatService.getMoreMessages(chat.id, chat.messages.length);
         if (messages.length !== 0) {
           setScrollBottom(false);
+          animateScroll.scrollTo(element.scrollHeight + 200, { containerId: 'current-chat-messages', duration: 0, });
           dispatch(addMessages(messages));
-          animateScroll.scrollTo(element.scrollHeight, { containerId: 'current-chat-messages', duration: 0 });
           setScrollBottom(true);
         }
       } catch (error) {
@@ -162,10 +152,10 @@ function Chat(props) {
     <div className="chatbox">
       <h1 className="current-chat-header">{chat.title}</h1>
       <div id="current-chat-messages" onScroll={handleScrollToTop}>
-        <ul>
+        <ul id="message-list">
           {chat.messages.map((msg) => (
             <div key={msg.id}>
-              {checkFirstNewMessage(msg) ? <li className='dashed' id="NewMessages"> <span>New Messages!</span> </li> : ''}
+              {checkFirstNewMessage(msg) ? <li className='dashed' id="NewMessages"><Element name="myScrollToElement"></Element> <span>New Messages!</span> </li> : ''}
               <OverlayTrigger
                 key={msg.id}
                 placement={msg.user.username === user.username ? 'left' : 'right'}

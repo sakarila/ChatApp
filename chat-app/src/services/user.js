@@ -1,7 +1,7 @@
 import axios from 'axios';
 import store from '../store';
 
-const baseUrl = 'http://localhost:3001/api/auth';
+const baseUrl = 'http://ChatApp-backend-dev.eu-central-1.elasticbeanstalk.com/api/auth'
 
 const getConfig = () => {
   const state = store.getState();
@@ -37,7 +37,7 @@ const updateLastLogin = async () => {
 };
 
 const getLoggedUsers = async () => {
-  const response = await axios.get('http://localhost:3001/api/loggedUsers');
+  const response = await axios.get('http://ChatApp-backend-dev.eu-central-1.elasticbeanstalk.com/api/loggedUsers');
   return response.data;
 };
 

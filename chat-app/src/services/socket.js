@@ -8,7 +8,7 @@ import {
 } from '../reducers/chatReducer';
 import { setLoggedUsers } from '../reducers/userReducer';
 
-const socket = io('http://localhost:3001');
+const socket = io('http://ChatApp-backend-dev.eu-central-1.elasticbeanstalk.com');
 
 socket.on('new-message', (({ message, chatID }) => {
   const state = store.getState();
